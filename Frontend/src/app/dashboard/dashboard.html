@@ -1,0 +1,94 @@
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 h-full">
+    <!-- Video Feed -->
+    <div class="lg:col-span-8 flex flex-col gap-4 lg:gap-6">
+        <div
+            class="relative bg-gray-900 rounded-2xl lg:rounded-3xl border border-gray-800 overflow-hidden shadow-2xl h-[300px] sm:h-[400px] lg:h-auto lg:flex-1 flex items-center justify-center">
+            <!-- Camera Feed -->
+            <img *ngIf="videoFrame() && systemState.isActive()" [src]="videoFrame()" alt="Live Camera Feed"
+                class="w-full h-full object-cover">
+
+            <!-- Standby Overlay -->
+            <div *ngIf="!videoFrame() || !systemState.isActive()"
+                class="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/40 backdrop-blur-sm px-4">
+                <div
+                    class="w-12 h-12 lg:w-16 lg:h-16 border-4 border-gray-800 border-t-green-500 rounded-full animate-spin mb-4">
+                </div>
+                <p class="text-gray-400 font-medium tracking-wide text-sm lg:text-base">SYSTEM ON STANDBY</p>
+                <p class="text-gray-600 text-xs lg:text-sm mt-2 text-center">Click START to begin AI detection</p>
+            </div>
+
+            <!-- Video Overlays -->
+            <div class="absolute top-3 lg:top-6 left-3 lg:left-6 flex items-center gap-2 lg:gap-3">
+                <div
+                    class="bg-black/50 backdrop-blur-md px-2 lg:px-4 py-1 lg:py-1.5 rounded-full border border-white/10 flex items-center gap-1.5 lg:gap-2">
+                    <div class="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <span class="text-[10px] lg:text-xs font-bold text-white tracking-widest">LIVE</span>
+                </div>
+            </div>
+
+            <div class="absolute top-3 lg:top-6 right-3 lg:right-6">
+                <div class="bg-black/50 backdrop-blur-md px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg border border-white/10">
+                    <span
+                        class="text-[8px] lg:text-[10px] text-gray-400 block uppercase font-bold tracking-tighter">Resolution</span>
+                    <span class="text-[10px] lg:text-xs text-white font-mono">{{ systemState.settings().resolution
+                        }}</span>
+                </div>
+            </div>
+
+            <!-- Processing Indicator -->
+            <div *ngIf="systemState.isActive()"
+                class="absolute bottom-3 lg:bottom-6 right-3 lg:right-6 flex items-center gap-1.5 lg:gap-2 bg-black/60 px-2 lg:px-4 py-1.5 lg:py-2 rounded-lg lg:rounded-xl backdrop-blur-md border border-white/10">
+                <span class="flex h-1.5 w-1.5 lg:h-2 lg:w-2 relative">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-full w-full bg-green-500"></span>
+                </span>
+                <span class="text-[10px] lg:text-xs text-green-500 font-bold uppercase tracking-widest">AI
+                    Processing...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts Panel -->
+    <div class="lg:col-span-4 flex flex-col gap-3 lg:gap-4 overflow-hidden max-h-[400px] lg:max-h-none">
+        
+        <!-- Speed Control Interface -->
+        <app-speed-control class="mb-2"></app-speed-control>
+
+        <div class="flex items-center justify-between mb-1 lg:mb-2">
+            <h2 class="text-base lg:text-lg font-bold text-white uppercase tracking-wider">Real-Time Alerts</h2>
+            <span class="bg-gray-800 text-gray-400 px-2 py-0.5 rounded text-[10px]">{{
+                systemState.recentDetections().length }} RECENT</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto pr-1 lg:pr-2 space-y-2 lg:space-y-3 custom-scrollbar">
+            <div *ngFor="let alert of systemState.recentDetections()" [class]="getCategoryColor(alert.category)"
+                class="alert-card p-3 lg:p-4 rounded-xl lg:rounded-2xl border transition-all duration-300 animate-slide-in">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <span class="text-[9px] lg:text-[10px] uppercase font-bold tracking-widest opacity-60">{{
+                            alert.category }}</span>
+                        <h3 class="text-base lg:text-lg font-bold brightness-125">{{ alert.label }}</h3>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-mono opacity-80">{{ alert.confidence * 100 | number:'1.0-0' }}%</div>
+                        <div class="text-[9px] lg:text-[10px] opacity-40 uppercase">Confidence</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-3 lg:mt-4">
+                    <span class="text-[9px] lg:text-[10px] font-mono opacity-50">{{ alert.timestamp |
+                        date:'HH:mm:ss.SSS' }}</span>
+                    <button
+                        class="text-[9px] lg:text-[10px] underline underline-offset-4 opacity-40 hover:opacity-100 transition-opacity uppercase">Trace</button>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="systemState.recentDetections().length === 0"
+                class="flex-1 flex flex-col items-center justify-center h-48 lg:h-64 text-center border-2 border-dashed border-gray-800 rounded-2xl lg:rounded-3xl">
+                <div class="text-3xl lg:text-4xl mb-3 lg:mb-4 opacity-20">📡</div>
+                <p class="text-gray-600 max-w-[200px] text-xs lg:text-sm px-4">No active detections in target area</p>
+            </div>
+        </div>
+    </div>
+</div>
