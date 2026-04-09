@@ -4,6 +4,22 @@ An **AI-powered traffic sign detection and driving assistant system** built usin
 The system detects traffic signs in real time, announces them using voice alerts, compares detected speed limits with user-defined speed, and includes an AI chatbot that provides driving safety guidance.
 
 This project demonstrates how **AI + real-time systems + web applications** can work together to improve road safety.
+---
+
+## Project Setup
+
+Add your project image inside the **images folder**.
+
+Example:
+
+images/project_setup.jpg
+
+Then it will automatically appear here:
+
+![Project Setup](images/traffic.png)
+
+---
+
 
 ---
 
